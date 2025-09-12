@@ -1,4 +1,6 @@
 streamlit>=1.28.0
 requests
 beautifulsoup4
+urllib3
 tiktoken  # Optional, for token counting
+playwright
