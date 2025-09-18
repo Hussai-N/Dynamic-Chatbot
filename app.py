@@ -48,23 +48,54 @@ if not st.session_state.logged_in:
     # Styles for login page
     st.markdown("""
     <style>
+    /* Global theme override */
+    .stApp {
+        background-color: #800020;
+        color: #e7e37fff;
+    }
+    .main {
+        background-color: #800020;
+        color: #e7e37fff;
+    }
+    .stSidebar {
+        background-color: #5e000093;
+        color: #ffffff;
+    }
+    .stMetric {
+        background-color: #800020;
+        color: #e7e37fff;
+    }
     .stTextInput input {
+        background-color: #5e000093;
+        color: #ffffff;
         border-radius: 5px;
-        border: 1px solid #ccc;
+        border: 1px solid #D4AF37;
     }
     .stButton button {
-        background-color: #007bff;
-        color: white;
+        background-color: #D4AF37;
+        color: #000000;
         border-radius: 5px;
         border: none;
         padding: 10px 20px;
     }
     .stButton button:hover {
-        background-color: #0056b3;
+        background-color: #B8860B;
     }
     .stAlert {
+        background-color: #5e000093;
+        color: #ffffff;
         border-radius: 5px;
         padding: 10px;
+        border: 1px solid #D4AF37;
+    }
+    section[data-testid="stSidebar"] {
+        background-color: #5e000093;
+    }
+    a {
+        color: #D4AF37 !important;
+    }
+    a:hover {
+        color: #B8860B !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -74,34 +105,69 @@ else:
     # Custom styles
     st.markdown("""
     <style>
+    /* Global theme override */
+    .stApp {
+        background-color: #800020;
+        color: #e7e37fff;
+    }
     .main {
-        background-color: #f5f5f5;
+        background-color: #800020;
+        color: #e7e37fff;
+    }
+    .stSidebar {
+        background-color: #5e000093;
+        color: #ffffff;
+    }
+    .stMetric {
+        background-color: #800020;
+        color: #e7e37fff;
     }
     .stHeader {
-        background-color: #ffffff;
+        background-color: #5e000093;
+        color: #ffffff;
     }
     .stTextInput input {
+        background-color: #5e000093;
+        color: #ffffff;
         border-radius: 5px;
-        border: 1px solid #ccc;
+        border: 1px solid #D4AF37;
     }
     .stButton button {
-        background-color: #007bff;
-        color: white;
+        background-color: #D4AF37;
+        color: #000000;
         border-radius: 5px;
         border: none;
         padding: 10px 20px;
     }
     .stButton button:hover {
-        background-color: #0056b3;
+        background-color: #B8860B;
     }
     .stChatMessage {
+        background-color: #5e000093;
+        color: #ffffff;
         border-radius: 10px;
         margin-bottom: 10px;
         padding: 10px;
+        border: 1px solid #D4AF37;
     }
     .stAlert {
+        background-color: #5e000093;
+        color: #ffffff;
         border-radius: 5px;
         padding: 10px;
+        border: 1px solid #D4AF37;
+    }
+    section[data-testid="stSidebar"] {
+        background-color: #5e000093;
+    }
+    .css-1d391kg {
+        background-color: #800020;
+    }
+    a {
+        color: #D4AF37 !important;
+    }
+    a:hover {
+        color: #B8860B !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -115,6 +181,8 @@ else:
             st.error(content)
         else:
             st.success("Website scraped successfully!")
+            st.info("🎉 Great! I've analyzed the website. Feel free to ask me anything about it, or check out the suggested questions below to get started!")
+
             # Initialize or reset session state for chat when URL changes
             if "last_url" not in st.session_state or st.session_state["last_url"] != url:
                 st.session_state["last_url"] = url
@@ -129,6 +197,28 @@ else:
             st.session_state["chunk_lengths"] = chunk_lengths
 
             st.caption("Chat about this website below. The assistant answers using only the scraped content.")
+
+            # Suggested prompts to make it more chatful
+            st.subheader("💬 Let's Chat! Here Are Some Ideas to Get Started:")
+            st.markdown("""
+            Feel free to ask anything, or try these fun suggestions:
+
+            - **What is this website about?** 🤔
+            - **What are the main features or services offered?** ✨
+            - **How can I contact them?** 📞
+            - **What are the latest updates or news?** 📰
+            - **Tell me about the team or company behind this site.** 👥
+            - **What products or topics are covered here?** 📚
+            - **Are there any FAQs or help sections?** ❓
+            - **What's the best way to navigate this site?** 🧭
+            - **Any special offers or promotions mentioned?** 🎉
+            - **How does this website help its users?** 💡
+            - **What's something interesting I might not have noticed?** 🔍
+            - **Can you summarize the key points?** 📝
+            - **Is there a blog or resources section?** 📖
+            - **What makes this site unique?** 🌟
+            - **Any testimonials or reviews mentioned?** ⭐
+            """)
 
             debug_mode = st.checkbox("Debug mode (show chunk info)")
             show_content = st.checkbox("Show full scraped content")
@@ -160,7 +250,7 @@ else:
                     st.experimental_rerun()
 
             # Chat input (multi-turn)
-            prompt = st.chat_input("Ask a question about this website")
+            prompt = st.chat_input("Ask me anything about this website! 😊 What would you like to know?")
             if prompt:
                 # Echo user message
                 st.session_state["messages"].append({"role": "user", "content": prompt})
@@ -199,10 +289,10 @@ else:
                         f"{selected_context}\n\n"
                         f"Question: {prompt}\n\n"
                         "Instructions:\n"
-                        "- Base the answer only on the snippets. Do not use outside knowledge.\n"
+                        "- If the question is a greeting (like 'hi' or 'hello'), respond with a friendly welcome and invite them to ask about the website.\n"
+                        "- Otherwise, base the answer only on the snippets. Do not use outside knowledge.\n"
                         "- If the snippets do not contain the answer, say: "
                         "\"I don't know based on the provided website content.\"\n"
-                        "- When possible, cite the chunk numbers you used.\n"
                         "- Keep the answer concise and relevant."
                     )
 
@@ -226,9 +316,10 @@ else:
                             {
                                 "text": (
                                     f"Question: {prompt}\n\n"
-                                    "- Base your answer strictly on the snippets above.\n"
+                                    "- If the question is a greeting (like 'hi' or 'hello'), respond with a friendly welcome and invite them to ask about the website.\n"
+                                    "- Otherwise, base your answer strictly on the snippets above.\n"
                                     "- If information is missing, say: \"I don't know based on the provided website content.\"\n"
-                                    "- When possible, cite the chunk numbers you used."
+                                    "- Keep the answer concise and relevant."
                                 )
                             }
                         ]
